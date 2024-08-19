@@ -6,7 +6,6 @@ import nonghoangvu.service.UserService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -24,11 +23,11 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
 @Configuration
-@Profile("!prod")
+//@Profile("!prod")//.env
 @RequiredArgsConstructor
 public class SecurityConfiguration {
 
-    private String[] WHITE_LIST = {"/auth/**"};
+    private String[] WHITE_LIST = {"/auth/**", "/login/**"};
     private final PreviousFilter preFilter;
     private final UserService userService;
     @Value("${api.prefix}")
@@ -40,7 +39,7 @@ public class SecurityConfiguration {
             @Override
             public void addCorsMappings(@NonNull CorsRegistry registry) {
                 registry.addMapping("**")
-                        .allowedOrigins("http://localhost:8080", "http://127.0.0.1:5500")
+                        .allowedOrigins("http://localhost:8080", "http://127.0.0.1:5500", "http://localhost:5173/")
                         .allowedMethods("GET", "POST", "PUT", "DELETE")
                         .allowedHeaders("*")
                         .allowCredentials(false)
@@ -60,6 +59,7 @@ public class SecurityConfiguration {
                 .authorizeRequests(authorizeRequests -> {
                     authorizeRequests.requestMatchers(WHITE_LIST).permitAll()
                             .requestMatchers("/" + this.apiPrefix + "/admin/**").hasAnyAuthority("ADMIN")
+                            .requestMatchers("/" + this.apiPrefix + "/user/**").hasAnyAuthority("USER")
                             .anyRequest().authenticated();
                 }).sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(STATELESS))
                 .authenticationProvider(provider()).addFilterBefore(this.preFilter, UsernamePasswordAuthenticationFilter.class);
@@ -78,7 +78,7 @@ public class SecurityConfiguration {
     public WebSecurityCustomizer webSecurityCustomizer() {
         return webSecurity ->
                 webSecurity.ignoring()
-                        .requestMatchers("/js/**");
+                        .requestMatchers("/js/**", "/templates/**");
     }
 
     @Bean

@@ -52,7 +52,7 @@ public class JwtServiceImpl implements JwtService {
     private String generateRefreshToken(Map<String, Object> claims, UserDetails user) {
         return Jwts.builder()
                 .setClaims(claims)//Info of payload don't want public
-                .setSubject(user.getUsername())
+                .setSubject(user.getUsername())// info will return when extract token: username
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * this.expiryDay))
                 .signWith(getKey(REFRESH_TOKEN), SignatureAlgorithm.HS256)

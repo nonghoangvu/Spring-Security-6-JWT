@@ -12,13 +12,14 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://127.0.0.1:5500")
+@CrossOrigin(origins = {"http://127.0.0.1:5500", "http://localhost:5173"})
 public class AuthenticationController {
     private final AuthenticationService authenticationService;
 
     @PostMapping("/access")
     public ResponseEntity<TokenResponse> login(@RequestBody SignInRequest request) {
-        return ResponseEntity.ok(this.authenticationService.authenticate(request));
+        var token = this.authenticationService.authenticate(request);
+        return ResponseEntity.ok(token);
     }
 
     @PostMapping("/refresh")

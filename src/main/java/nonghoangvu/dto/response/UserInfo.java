@@ -10,4 +10,5 @@ public class UserInfo {
     private String fullname;
     private String gender;
     private String address;
+    private String role;
 }

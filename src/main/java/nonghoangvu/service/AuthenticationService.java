@@ -96,6 +96,7 @@ public class AuthenticationService {
                 .fullname(user.getFullname())
                 .address(user.getAddress())
                 .gender(user.getGender() ? "male" : "female")
+                .role(user.getRole())
                 .build();
     }
 }
